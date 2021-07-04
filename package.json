@@ -3,15 +3,27 @@
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "babel src --out-dir . --ignore \"**/__tests__\" --extensions \".ts,.js\"",
+    "watch": "babel -w src --out-dir . --ignore \"**/__tests__\" --extensions \".ts,.js\"",
+    "prepare": "cross-env NODE_ENV=production npm run build",
+    "clean": "rimraf *.js"
+  },
   "dependencies": {
     "firebase-admin": "^9.9.0",
     "gatsby-cli": "^3.8.0",
     "joi": "^17.4.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.14.0",
+    "@babel/core": "^7.14.0",
+    "babel-preset-gatsby-package": "^1.10.0-next.0",
+    "cross-env": "^7.0.3",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.3.1"
+    "prettier": "^2.3.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.5"
   },
   "lint-staged": {
     "*.{js,css,md}": "prettier --write"

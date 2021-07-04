@@ -3,3 +3,4 @@ node_modules
 *.iml
 .husky
 *.log
+!index.js
