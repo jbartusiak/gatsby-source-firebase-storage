@@ -1,33 +1,50 @@
 import { initFirebase } from "./firestore-storage";
 import * as admin from 'firebase-admin';
+import { PluginOptions, SourceNodesArgs } from 'gatsby';
+import { storage } from 'firebase-admin/lib/storage';
+import { createFileNodeFromBuffer } from 'gatsby-source-filesystem';
 
-let fbStorage: admin.storage.Storage;
+let fbStorage: storage.Storage;
 
-export function onPreInit(_, options: admin.AppOptions) {
-  console.log('---INITIALIZING FIREBASE SOURCE STORAGE---');
-  console.log('CREDENTIAL: ', options.credential);
-  console.log('STORAGE_BUCKET: ', options.storageBucket);
-  fbStorage = initFirebase({
-    credential: options.credential,
-    storageBucket: options.storageBucket
-  });
-  console.log('---FINISHED FIREBASE SOURCE STORAGE---');
+exports.onPreInit = (_, options: admin.AppOptions) => {
+    fbStorage = initFirebase({
+        credential: options.credential,
+        storageBucket: options.storageBucket
+    }).storage();
 }
 
-export function pluginOptionsSchema({ Joi }) {
-  Joi.object({
-    credential: Joi.object().required(),
-    storageBucket: Joi.string().required(),
-  });
+exports.pluginOptionsSchema = ({Joi}) =>
+    Joi.object({
+        credential: Joi.object().required(),
+        storageBucket: Joi.string().required(),
+    });
+
+const createMarkdownSources = async ({actions, cache, createNodeId, store}: SourceNodesArgs) => {
+    const {createNode} = actions;
+    const [ files ] = await fbStorage.bucket().getFiles({
+        prefix: 'markdown/experiments',
+    });
+
+    const promises = files
+        .filter(file => file.name.match(/\.\w+$/))
+        .map(async file => {
+            const [buffer] = await file.download();
+            const result = await createFileNodeFromBuffer({
+                createNode,
+                cache,
+                store,
+                buffer,
+                createNodeId,
+                name: file.name.split('.')[0],
+                ext: '.mdx'
+            });
+            return Promise.resolve(result);
+        });
+
+    return Promise.all(promises);
 }
 
-// const createSourceNodes = async (actions, createContentDigest, types) => {
-//   const { createNode } = actions;
-//
-//   storage
-//
-//   return Promise.all(promises);
-// };
-
-// exports.sourceNodes = async ({ actions, createContentDigest }, { types }) =>
-//   Promise.all();
+exports.sourceNodes = async (
+    args: SourceNodesArgs,
+    options: PluginOptions,
+) => createMarkdownSources(args);
