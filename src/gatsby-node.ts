@@ -7,7 +7,7 @@ import fs from 'fs';
 
 let fbStorage: storage.Storage;
 
-const PLUGIN_NAME = '@bartusiak/gatsby-source-firebase-storage';
+export const PLUGIN_NAME = '@bartusiak/gatsby-source-firebase-storage';
 
 interface StorageType {
     collectionPrefix: string;
