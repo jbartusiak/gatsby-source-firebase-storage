@@ -1,13 +1,13 @@
 {
   "name": "@bartusiak/gatsby-source-firebase-storage",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "build": "babel src --out-dir . --ignore \"**/__tests__\" --extensions \".ts,.js\"",
     "watch": "babel -w src --out-dir . --ignore \"**/__tests__\" --extensions \".ts,.js\"",
     "prepare": "cross-env NODE_ENV=production npm run build",
-    "clean": "rimraf {gatsby-node,firestore-storage}.js",
+    "clean": "rimraf {gatsby-node,firestore-storage}.js && rimraf {types,utils,hooks}",
     "deploy": "yarn publish --access public"
   },
   "dependencies": {
