@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin';
-import { PLUGIN_NAME } from "./gatsby-node";
+
+export const PLUGIN_NAME = '@bartusiak/gatsby-source-firebase-storage';
 
 export const initFirebase = ({ credential, storageBucket}) => {
   return admin.initializeApp({

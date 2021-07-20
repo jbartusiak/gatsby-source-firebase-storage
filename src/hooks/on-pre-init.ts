@@ -1,34 +1,11 @@
-import { GatsbyCache, ParentSpanPluginArgs } from "gatsby";
+import { ParentSpanPluginArgs } from "gatsby";
 import * as admin from "firebase-admin";
-import { initFirebase, PLUGIN_NAME } from "./firestore-storage";
+import { initFirebase } from "../firestore-storage";
 import path from "path";
 import fs from "fs";
 import { storage } from "firebase-admin/lib/storage";
-
-interface StorageType {
-    collectionPrefix: string;
-    typeExt: string;
-    name: string;
-}
-
-const extractFileName = (fullPath: string) => {
-    const [name,] = fullPath.split('.');
-    const lastSlash = name.lastIndexOf('/');
-    return name.substr(lastSlash+1);
-}
-
-type GetCache = (name: string) => GatsbyCache;
-
-const retrieveCache = (cache: GetCache) => cache(PLUGIN_NAME);
-
-const createDirectory = (cache: GatsbyCache, name: string) => {
-    const cacheDirectory = cache.directory;
-    const folderDir = path.join(cacheDirectory, name);
-    if (!fs.existsSync(folderDir)) {
-        fs.mkdirSync(folderDir);
-    }
-    return;
-}
+import { StorageType } from "../types/storage.model";
+import { createDirectory, extractFileName, GetCache, retrieveCache } from "../utils/utils";
 
 const createMarkdownSources = async (
     {getCache}: ParentSpanPluginArgs,
@@ -56,9 +33,6 @@ const createMarkdownSources = async (
         });
 
     await Promise.all(promises);
-
-    console.log(`All ${name} files downloaded`);
-
     return Promise.resolve();
 }
 
